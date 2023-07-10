@@ -1,32 +1,32 @@
 import router from "@/router"
-import { useUserStoreHook } from "@/store/modules/user"
-// import { usePermissionStoreHook } from "@/store/modules/permission"
+import { useUserStoreHook } from "@/stores/user"
+import { usePermissionStoreHook } from "@/stores/permission"
 import { ElMessage } from "element-plus"
 import { getToken } from "@/utils/cache/cookies"
 import asyncRouteSettings from "@/config/async-route"
 import isWhiteList from "@/config/white-list"
-// import NProgress from "nprogress"
-// import "nprogress/nprogress.css"
+import NProgress from "nprogress"
+import "nprogress/nprogress.css"
 
-// NProgress.configure({ showSpinner: false })
+NProgress.configure({ showSpinner: false })
 
 router.beforeEach(async (to, _from, next) => {
-  // NProgress.start()
+  NProgress.start()
   const userStore = useUserStoreHook()
-  // const permissionStore = usePermissionStoreHook()
+  const permissionStore = usePermissionStoreHook()
   // 判断该用户是否登录
   if (getToken()) {
     if (to.path === "/login") {
       // 如果已经登录，并准备进入 Login 页面，则重定向到主页
       next({ path: "/" })
-      // NProgress.done()
+      NProgress.done()
     } else {
       // 检查用户是否已获得其权限角色
       if (userStore.roles.length === 0) {
         try {
-          if (asyncRouteSettings.open) {
+          if (asyncRouteSettings.open) {   //指开启了动态路由
             // 注意：角色必须是一个数组！ 例如: ['admin'] 或 ['developer', 'editor']
-            await userStore.getInfo()
+            await userStore.getInfo()   //获取用户信息
             const roles = userStore.roles
             // 根据角色生成可访问的 Routes（可访问路由 = 常驻路由 + 有访问权限的动态路由）
             permissionStore.setRoutes(roles)
@@ -47,7 +47,7 @@ router.beforeEach(async (to, _from, next) => {
           userStore.resetToken()
           ElMessage.error(err.message || "路由守卫过程发生错误")
           next("/login")
-          // NProgress.done()
+          NProgress.done()
         }
       } else {
         next()
@@ -61,11 +61,11 @@ router.beforeEach(async (to, _from, next) => {
     } else {
       // 其他没有访问权限的页面将被重定向到登录页面
       next("/login")
-      // NProgress.done()
+      NProgress.done()
     }
   }
 })
 
-// router.afterEach(() => {
-  // NProgress.done()
-// })
+router.afterEach(() => {
+  NProgress.done()
+})
