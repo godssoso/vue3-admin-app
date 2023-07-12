@@ -104,6 +104,30 @@ export const asyncRoutes: RouteRecordRaw[] = [
     ]
   },
   {
+    path:'/about',
+    component:Layouts,
+    redirect: "/about/index",
+    name:'About',
+    meta: {
+      title: "关于我们",
+      svgIcon: "food",
+      roles: ["admin"], // 可以在根路由中设置角色
+      alwaysShow: false // 将始终显示根菜单
+    },
+    children:[
+      {
+        path: "index",
+        component: () => import("@/views/about/index.vue"),
+        name: "about",
+        meta: {
+          title: "关于我们",
+          svgIcon: "food",
+          roles: ["admin"] 
+        }
+      },
+    ]
+  },
+  {
     path: "/:pathMatch(.*)*", // Must put the 'ErrorPage' route at the end, 必须将 'ErrorPage' 路由放在最后
     redirect: "/404",
     name: "ErrorPage",

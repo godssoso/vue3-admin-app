@@ -4,6 +4,8 @@ import vue from "@vitejs/plugin-vue"
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
+import svgLoader from "vite-svg-loader"
 
 
 /** 配置项文档：https://cn.vitejs.dev/config */
@@ -51,6 +53,13 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
       }),
       Components({
         resolvers: [ElementPlusResolver()],
+      }),
+      /** 将 SVG 静态图转化为 Vue 组件 */
+      svgLoader({ defaultImport: "url" }),
+      /** SVG */
+      createSvgIconsPlugin({
+        iconDirs: [path.resolve(process.cwd(), "src/icons/svg")],
+        symbolId: "icon-[dir]-[name]"
       }),
     ],
   }
